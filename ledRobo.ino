@@ -24,12 +24,15 @@
 #include "Adafruit_GFX.h"
 
 Adafruit_8x8matrix matrix = Adafruit_8x8matrix();
+int theta;
+static int DOT_COUNT = 8;
 
 void setup() {
   Serial.begin(9600);
   Serial.println("8x8 LED Matrix Test");
   
   matrix.begin(0x70);  // pass in the address
+  theta = 90;
 }
 
 static const uint8_t PROGMEM
@@ -87,28 +90,32 @@ void loop() {
 //  matrix.writeDisplay();  // write the changes we just made to the display
 //  delay(500);
 //
-//  matrix.clear();
-//  matrix.drawRect(0,0, 8,8, LED_ON);
-//  matrix.fillRect(2,2, 4,4, LED_ON);
-//  matrix.writeDisplay();  // write the changes we just made to the display
-//  delay(500);
+  matrix.clear();
+  // sinの範囲が-1 ~ 1だとmapかけた時にあまり値が変わらないので10をかけておく
+  float size = 10 * sin(radians(theta));
+  int val = map(size, -10, 10, 2, DOT_COUNT + 1);
+  int start = (DOT_COUNT - val) / 2;
+  matrix.fillRect(start, start, val, val, LED_ON);
+  matrix.writeDisplay();
+  delay(30);
+  theta += 10;
 //
 //  matrix.clear();
-//  matrix.drawCircle(3,3, 3, LED_ON);
+//  matrix.drawCircle(3, 3, 3, LED_ON);
 //  matrix.writeDisplay();  // write the changes we just made to the display
 //  delay(500);
 
-  matrix.setTextSize(1);
-  matrix.setTextWrap(false);  // we dont want text to wrap so it scrolls nicely
-  matrix.setTextColor(LED_ON);
-  // lenの値は右に流れたテキストが最後まで表示されるだけのドットの数を設定
-  for (int8_t x=0, len = -104; x >= len ; x--) {
-    matrix.clear();
-    matrix.setCursor(x,0);
-    matrix.print("Ryota Niinomi");
-    matrix.writeDisplay();
-    delay(100);
-  }
+//  matrix.setTextSize(1);
+//  matrix.setTextWrap(false);  // we dont want text to wrap so it scrolls nicely
+//  matrix.setTextColor(LED_ON);
+//  // lenの値は右に流れたテキストが最後まで表示されるだけのドットの数を設定
+//  for (int8_t x=0, len = -104; x >= len ; x--) {
+//    matrix.clear();
+//    matrix.setCursor(x,0);
+//    matrix.print("Ryota Niinomi");
+//    matrix.writeDisplay();
+//    delay(100);
+//  }
   
 //  matrix.setRotation(3);
 //  for (int8_t x=7; x>=-36; x--) {
